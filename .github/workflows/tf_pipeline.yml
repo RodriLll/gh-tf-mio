@@ -10,10 +10,17 @@ on:
         description: 'Terraform Action to Perform'
         type: choice
         options:
-        - Terraform_apply
-        - Terraform_destroy
+         - Create_infra
+         - Terraform_apply
+         - Terraform_destroy
+         - Destroy_infra
 
-jobs:
+jobs: 
+  # 1. crear base infra
+  # 2. hacer cd para que se meta en la carpeta base_infra
+  # 3. init y apply
+  # 4. que vuelva para atras y continue
+  # 5. hagamos que al final de todo destruya el base_infra
   terraform_apply:
     name: "Terraform_apply"
     if: ${{ github.event.inputs.action == 'Terraform_apply' }}
@@ -35,11 +42,11 @@ jobs:
       
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform validate --no-color
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply -auto-approve 
+        run: terraform apply --auto-approve 
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -67,7 +74,7 @@ jobs:
       - name: Terraform Destroy
         id: destroy
         working-directory: ${{ github.event.inputs.resource }}
-        run: terraform destroy -auto-approve 
+        run: terraform destroy --auto-approve 
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

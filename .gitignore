@@ -1,15 +1,16 @@
-##
+## 
 # Terraform repo .gitignore
 # Source: https://github.com/github/gitignore/blob/master/Terraform.gitignore
 ##
 
 # Local .terraform directories
-**/.terraform/*
+.terraform
+base_infra/.terraform
 
 # .tfstate files
 *.tfstate
 *.tfstate.*
-
+*.lock.*
 # Crash log files
 crash.log
 

@@ -6,23 +6,9 @@
 resource "aws_s3_bucket" "state_bucket" {
   bucket = var.name_of_s3_bucket
 
-  # Tells AWS to encrypt the S3 bucket at rest by default
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
   # Prevents Terraform from destroying or replacing this object - a great safety mechanism
   lifecycle {
     prevent_destroy = true
-  }
-
-  # Tells AWS to keep a version history of the state file
-  versioning {
-    enabled = true
   }
 
   tags = {
@@ -30,6 +16,24 @@ resource "aws_s3_bucket" "state_bucket" {
   }
 }
 
+# Encrypt s3-bucket
+resource "aws_s3_bucket_server_side_encryption_configuration" "state_bucket_encryption" {
+  bucket = aws_s3_bucket.state_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "aws:kms"
+      # Omitting kms_master_key_id uses the default AWS S3 KMS key
+    }
+  }
+}
+# Enable versioning for s3-bucket
+resource "aws_s3_bucket_versioning" "state_bucket_versioning" {
+  bucket = aws_s3_bucket.state_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
 # Build a DynamoDB to use for terraform state locking
 resource "aws_dynamodb_table" "tf_lock_state" {
   name = var.dynamo_db_table_name
