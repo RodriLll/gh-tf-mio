@@ -38,10 +38,10 @@ jobs:
             AWS_DEFAULT_REGION: ${{ secrets.REGION }}
 
       - name: Terraform Validate
-        run: terraform validate --no-color
+        run: terraform validate -no-color
 
       - name: Terraform Apply
-        run: terraform apply --auto-approve 
+        run: terraform apply -auto-approve 
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -68,11 +68,11 @@ jobs:
       
       - name: Terraform Validate
         id: validate
-        run: terraform validate --no-color
+        run: terraform validate -no-color
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply --auto-approve 
+        run: terraform apply -auto-approve 
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -100,7 +100,7 @@ jobs:
       - name: Terraform Destroy
         id: destroy
         working-directory: ${{ github.event.inputs.resource }}
-        run: terraform destroy --auto-approve 
+        run: terraform destroy -auto-approve 
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -128,7 +128,7 @@ jobs:
             AWS_DEFAULT_REGION: ${{ secrets.REGION }}
 
       - name: Terraform Destroy
-        run: terraform destroy --auto-approve 
+        run: terraform destroy -auto-approve 
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
