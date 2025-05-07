@@ -16,11 +16,37 @@ on:
          - Destroy_infra
 
 jobs: 
-  # 1. crear base infra
-  # 2. hacer cd para que se meta en la carpeta base_infra
-  # 3. init y apply
-  # 4. que vuelva para atras y continue
-  # 5. hagamos que al final de todo destruya el base_infra
+  create_infra:
+    name: "Create_infra"
+    if: ${{ github.event.inputs.action == 'Create_infra' }}
+    runs-on: ubuntu-latest
+    defaults: 
+      run: 
+        working-directory: ./base_infra
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init 
+        run: terraform init 
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.REGION }}
+
+      - name: Terraform Validate
+        run: terraform validate --no-color
+
+      - name: Terraform Apply
+        run: terraform apply --auto-approve 
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.REGION }}
+
   terraform_apply:
     name: "Terraform_apply"
     if: ${{ github.event.inputs.action == 'Terraform_apply' }}
@@ -30,7 +56,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         id: init
@@ -61,7 +87,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         id: init
@@ -79,3 +105,24 @@ jobs:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: ${{ secrets.REGION }}
+
+  destroy_infra:
+    name: "Destroy_infra"
+    if: ${{ github.event.inputs.action == 'Destroy_infra' }}
+    runs-on: ubuntu-latest
+    defaults: 
+      run: 
+        working-directory: ./base_infra
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+     
+      - name: Terraform Destroy
+        run: terraform destroy --auto-approve 
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.REGION }}            
