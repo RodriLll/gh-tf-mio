@@ -1,6 +1,6 @@
 ##Create and bootstrap webserver #lanzar
 resource "aws_instance" "webserver" {
-  ami           = data.aws_ami.ubuntu_2404.id
+  ami           = data.aws_ssm_parameter.ubuntu_2404_ami.value
   instance_type = "t2.micro"
   #key_name                    = app-ssh-key 
   associate_public_ip_address = true
