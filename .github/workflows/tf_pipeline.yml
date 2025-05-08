@@ -52,6 +52,7 @@ jobs:
     name: "Terraform_apply"
     if: ${{ github.event.inputs.action == 'Terraform_apply' }}
     runs-on: ubuntu-latest
+    environment: pin
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -83,6 +84,7 @@ jobs:
     name: "Terraform_destroy"
     if: ${{ github.event.inputs.action == 'Terraform_destroy' }}
     runs-on: ubuntu-latest
+    environment: pin
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -111,6 +113,7 @@ jobs:
     name: "Destroy_infra"
     if: ${{ github.event.inputs.action == 'Destroy_infra' }}
     runs-on: ubuntu-latest
+    environment: pin
     defaults: 
       run: 
         working-directory: ./base_infra
