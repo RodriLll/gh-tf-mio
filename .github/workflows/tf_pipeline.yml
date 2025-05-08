@@ -20,6 +20,7 @@ jobs:
     name: "Create_infra"
     if: ${{ github.event.inputs.action == 'Create_infra' }}
     runs-on: ubuntu-latest
+    environment: pin
     defaults: 
       run: 
         working-directory: ./base_infra
