@@ -143,6 +143,7 @@ jobs:
       - name: Empty S3 bucket
         run: |
           aws s3 rm s3://pin2-2405-grupo8/base_infra_state/terraform.tfstate
+          aws s3 rm s3://pin2-2405-grupo8/backend.tfstate
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
