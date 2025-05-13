@@ -142,16 +142,15 @@ jobs:
 
       - name: Empty S3 bucket
         run: |
-          # List all object versions and delete markers
-          versions=$(aws s3api list-object-versions --bucket "pin2-2405-grupo8" --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')
-          markers=$(aws s3api list-object-versions --bucket "pin2-2405-grupo8" --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}')
-
-          # Combine both into one list
-          combined=$(jq -s '{Objects: add.Objects}' <(echo "$versions") <(echo "$markers"))
-
-          # Only delete if there are objects
-          if [ "$(echo "$combined" | jq '.Objects | length')" -gt 0 ]; then
-            echo "$combined" | aws s3api delete-objects --bucket "pin2-2405-grupo8" --delete file:///dev/stdin
+          BUCKET="pin2-2405-grupo8"
+          versions=$(aws s3api list-object-versions --bucket "$BUCKET" --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json)
+          markers=$(aws s3api list-object-versions --bucket "$BUCKET" --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json)
+          all_objects=$(jq -n --argjson v "$versions" --argjson m "$markers" '{Objects: ($v + $m)}')
+          count=$(echo "$all_objects" | jq '.Objects | length')
+          echo "Found $count objects to delete"
+          if [ "$count" -gt 0 ]; then
+            echo "$all_objects" > delete.json
+            aws s3api delete-objects --bucket "$BUCKET" --delete file://delete.json
           else
             echo "Bucket is already empty."
           fi
